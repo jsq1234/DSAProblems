@@ -13,10 +13,10 @@ int SubsetSum_1(vector<int>& nums, int target){
 
 	for(int j=1; j<=target; j++){
 		for(int i=1; i<=n; i++){
-			if(  j <= nums[i-1] ){
+			if( j - nums[i-1] >= 0 ){
 				dp[i][j] = dp[i][j] or dp[i-1][j-nums[i-1]];
 			}else{
-				dp[i][j] = dp[i-1][j];
+				dp[i][j] = dp[i][j] or dp[i-1][j];
 			}
 		}
 	}
