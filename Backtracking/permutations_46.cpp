@@ -38,6 +38,6 @@ class Solution {
                     compute(nums,cur,ans);
                     cur.pop_back();
                 }
-        }
+            }
         }
 };
