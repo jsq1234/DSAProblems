@@ -11,48 +11,42 @@ using namespace std;
 
 class Solution {
 public:
+    map<pair<int,int>,vector<int>> dp;
     vector<int> diffWaysToCompute(string expression) {
-        vector<int> numbers;
-        vector<char> op;
-        for(auto x : expression){
-            if('0' <= x && x <= '9'){
-                numbers.push_back(x-'0');
-            }else{
-                op.push_back(x);
+        return solve(0,expression.length()-1,expression);
+    }
+    vector<int> solve(int i, int j, string& exp){
+        if( j-i+1 <= 2 ) return {stoi(exp.substr(i,j-i+1))};
+
+        if( dp.find({i,j}) != dp.end() ) return dp[{i,j}];
+
+        vector<int> v;
+        for(int k=i; k<=j; k++){
+            if(!(exp[k] >= '0' && exp[k] <= '9')){
+                vector<int> left = solve(i,k-1,exp);
+                vector<int> right = solve(k+1,j,exp);
+                if(exp[k] == '+'){
+                    for(int x : left){
+                        for(int y : right){
+                            v.push_back(x+y);
+                        }
+                    }
+                }else if(exp[k] == '-'){
+                    for(int x : left){
+                        for(int y : right){
+                            v.push_back(x-y);
+                        }
+                    }
+                }else if(exp[k] =='*'){
+                    for(int x : left){
+                        for(int y : right){
+                            v.push_back(x*y);
+                        }
+                    }
+                }
             }
         }
-        return {};
-    }
-
-    int solve(int i, vector<int>& nums, vector<char>& op, vector<int>& ans){
-        if(!op.size() && nums.size() == 1){
-            return nums[0];
-        }
-
-        if( i < nums.size() - 1 ){
-            int temp = nums[i];
-            nums[i] = doOperation(nums[i],nums[i+1],op[i]);
-            int val = solve(i+1,nums,op,ans);
-            ans.push_back(val);
-            nums[i] = temp;
-        }
-
-        
-        
-    }
-
-    int doOperation(int x, int y, char op){
-        if( op == '+' ){
-            return x + y;
-        }else if (op == '-'){
-            return x - y;
-        }
-        return x*y;
+        return dp[{i,j}] = v;
     }
 };
 
-int main(){
-    Solution sol;
-    sol.diffWaysToCompute("2*3-4*5+6");
-    
-}
