@@ -14,6 +14,7 @@ class Solution {
 public:
     vector<vector<int>> st;
     vector<vector<int>> me;
+    int dp[10][1<<8];
     int maxCompatibilitySum(vector<vector<int>>& students, vector<vector<int>>& mentors) {
         int m = students.size();
         int n = students[0].size();
@@ -21,7 +22,10 @@ public:
         me = mentors;
         int maxScore = 0;
         vector<int> visited(m,0);
-        solve(0,n,m,visited,0,maxScore);
+        //solve(0,n,m,visited,0,maxScore);
+        int mask = 0;
+        memset(dp,-1,sizeof(dp));
+        return bitmask(0,mask,n,m);
         return maxScore;
     }
 
@@ -47,6 +51,27 @@ public:
     }
 
     // Using dp + bitmasking
+
+
+    int bitmask(int idx, int mask, int n, int m){
+        if(idx >= m){
+            return 0;
+        }
+        if(dp[idx][mask] != -1 ) return dp[idx][mask];
+
+        vector<int> t = st[idx];
+        int maxScore = 0;
+        for(int i=0; i<m; i++){
+            if((mask&(1<<i)) == 0){
+                int score = 0;
+                vector<int> u = me[i];
+                for(int j=0; j<n; j++) if(t[j] == u[j]) score++;
+                maxScore = max(maxScore, score + bitmask(idx+1,mask^(1<<i),n,m));
+            }
+        }
+
+        return dp[idx][mask] = maxScore;
+    }
 };
 
 /* 
